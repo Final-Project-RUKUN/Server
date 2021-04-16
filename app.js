@@ -5,6 +5,7 @@ if (process.env.NODE_ENV !== 'production') {
 const express = require('express')
 const cors = require('cors')
 const route  = require('./routes/')
+const handleError = require('./middlewares/errHandler')
 const app = express()
 
 const port = process.env.PORT || 3000
@@ -14,5 +15,6 @@ app.use(express.urlencoded({ extended: true }))
 app.use(express.json())
 
 app.use(route)
+app.use(handleError)
 
 module.exports = app
