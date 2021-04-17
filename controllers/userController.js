@@ -39,13 +39,12 @@ class UserController {
   }
 
   static async register(req, res, next) {
-    const { name, username, password, role, invitation_code } = req.body
+    const { name, username, password, invitation_code } = req.body
     try {
       const village = await Village.findOne({ where: { invitation_code }})
 
       if (village) {
-        const villageName = village.name
-        const user = await User.create({ name, username, password, role })
+        const user = await User.create({ name, username, password, role: 'member', VillageId: village.id })
 
         res.status(201).json(user)
       } else {
@@ -53,6 +52,7 @@ class UserController {
       }
     } catch (error) {
       next(error)
+
       console.log(error);
     }
   }
