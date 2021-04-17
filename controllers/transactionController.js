@@ -1,4 +1,4 @@
-const { Transaction, Village } = require('../models')
+const { Transaction, Village, User } = require('../models')
 
 class TransactionController { 
 
@@ -6,7 +6,10 @@ class TransactionController {
     try {
       const { VillageId } = req.currentUser
 
-      const village = await Village.findByPk(VillageId, { include: Transaction })
+      const village = await Village.findByPk(VillageId, { include: [{
+        model:  Transaction,
+        include: User }]
+      })
       
       res.status(200).json(village)
     } catch (error) {
@@ -17,6 +20,7 @@ class TransactionController {
   static async addTransaction(req, res, next) {
     const { title, amount, category, note, type } = req.body
     const { id, VillageId } = req.currentUser
+    
     try {
       if (type === 'expence') {
         const { balance } = await Village.findByPk(VillageId)

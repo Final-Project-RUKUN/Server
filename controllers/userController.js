@@ -5,11 +5,9 @@ class UserController {
 
   static async login(req, res, next) {
     const { username, password } = req.body
-    console.log('jalannn');
     try {
       const user = await User.findOne({ where: { username } })
-      console.log(user);
-      // res.status(200).json(user)
+
       if (user) {
         const isPassword = comparePassword( password, user.password )
         
@@ -29,10 +27,12 @@ class UserController {
     }
   }
 
-  static async fethUserVillage(req, res, next) {
-    const {  } = req.currentUser
+  static async getUser(req, res, next) {
+    const { id } = req.params
     try {
-      
+      const user = await User.findByPk(id)
+
+      res.status(200).json(user)
     } catch (error) {
       next(error)
     }
@@ -73,7 +73,7 @@ class UserController {
     const { id } = req.params
 
     try {
-      const data = await User.destroy({ where: id })
+      await User.destroy({ where: id })
 
       res.status(200).json({ message: "Successfully deleted user" })
     } catch (error) {
