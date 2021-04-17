@@ -44,6 +44,7 @@ class UserController {
       const village = await Village.findOne({ where: { invitation_code }})
 
       if (village) {
+        const villageName = village.name
         const user = await User.create({ name, username, password, role })
 
         res.status(201).json(user)
@@ -52,7 +53,6 @@ class UserController {
       }
     } catch (error) {
       next(error)
-
       console.log(error);
     }
   }
