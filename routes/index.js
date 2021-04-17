@@ -1,15 +1,24 @@
 const route = require('express').Router()
 const userRoute = require('./userRoute')
 const villageRoute = require('./villageRoute')
-const historyRoute = require('./historyRoute')
+const transactionRoute = require('./transactionRoute')
 const suggestionRoute = require('./suggestioRoute')
+const adminRoute = require('./adminRoute')
+const { authenticate } = require('../middlewares/auth')
 
+route.get('/' ,(req, res)=>{
+  res.send('gooooo')
+})
 
 route.use('/user', userRoute)
 
-route.use('/village', villageRoute)
+route.use('/admin', adminRoute)
 
-route.use('/history', historyRoute)
+route.use(authenticate)
+
+route.use('/villagers', villageRoute)
+
+route.use('/transaction', transactionRoute)
 
 route.use('/suggestion', suggestionRoute)
 

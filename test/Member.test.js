@@ -1,36 +1,34 @@
 const request = require('supertest')
 const jwt = require('jsonwebtoken')
 const app = require('../app')
-const {User} = require('../models')
+const { User } = require('../models')
 
-let access_token_value = null
+let access_token = null
+const body = {
+  title: "Ga Setuju Beli Kursi",
+  description:"Karena kursi digudang sudah ada"
+}
 
-beforeAll(function(done){
-  User.findOne({where: {username: "bob123"}})
-    .then(data => {
-      access_token_value = jwt.sign({id: data.id, name: data.name}, process.env.SECRET)
-      done()
-    })
-    .catch(err => {
-      console.log(err)
-      done()
-    })
+beforeAll(function async (done){
+  try {
+    const data = await User.findOne({where: {username: "prasatya"}})
+    
+    access_token = jwt.sign({id: data.id, name: data.name}, process.env.SECRET)
+    done()
+     
+  } catch (error) {
+    done(error)
+  }
 })
 
+//! SCOPE SUCCESS SUGGESTIONS
 describe("SUCCESS /suggestions", function(){
-  //CREATE Product
+  //CREATE suggestion
   it("POST /suggestions - 201 OK", function(done) {
-  const body = {
-    title: "Ga Setuju beli cangkul",
-    description:"blablabla"
-  }
 
-  const headers = {
-    access_token: access_token_value
-  }
   request(app)
     .post("/suggestions")
-    .set(headers)
+    .set({ access_token })
     .send(body)
     .end(function(err,res){
         if(err) {
@@ -51,12 +49,10 @@ describe("SUCCESS /suggestions", function(){
 
   //READ Product
   it("GET /suggestions - 200 OK", function(done) { 
-    const headers = {
-      access_token: access_token_value
-    }
+    
     request(app)
       .get("/suggestions")
-      .set(headers)
+      .set({ access_token })
       .end(function(err,res){
         if(err) {
           done(err)
@@ -76,18 +72,12 @@ describe("SUCCESS /suggestions", function(){
       })
   })
 
-  //*PUT suggestions
+  //PUT suggestions
   it("PUT /suggestions/1 - 200 OK", function(done) {
-    const body = {
-      title: "Ga Setuju beli cangkul",
-      description:"blablabla"
-    }
-    const headers = {
-        access_token: access_token_value
-    }
+  
     request(app)
       .put("/suggestions/1")
-      .set(headers)
+      .set({ access_token })
       .send(body)
       .end(function(err,res){
         if(err) {
@@ -105,24 +95,22 @@ describe("SUCCESS /suggestions", function(){
       })
   })
 
-  //*DELETE suggestions
+  //DELETE suggestions
   it("DELETE /suggestions/1 - 200 OK", function(done) {
-    const headers = {
-      access_token: access_token_value
-    }
+    
     request(app)
       .delete("/suggestions/1")
-      .set(headers)
+      .set({ access_token })
       .end(function(err,res){
         if(err) {
-            done(err)
+          done(err)
         } else {
-            expect(res.statusCode).toEqual(200)
-            expect(typeof res.body).toEqual("object")
-            expect(res.body).toHaveProperty("message")
-            expect(res.body.message).toEqual("Suggestion has been successfully deleted.")
+          expect(res.statusCode).toEqual(200)
+          expect(typeof res.body).toEqual("object")
+          expect(res.body).toHaveProperty("message")
+          expect(res.body.message).toEqual("Suggestion has been successfully deleted.")
 
-            done()
+          done()
         }
       })
   })
