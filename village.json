@@ -2,7 +2,7 @@
   {
     "id":1,
     "name":"Alas",
-    "invitation":"alas123",
+    "invitation_code":"alas123",
     "location":"Indonesia",
     "balance":"1000000000",
     "UserId":"1"
@@ -10,7 +10,7 @@
   {
     "id":2,
     "name":"Fakfak",
-    "invitation":"fakfak123",
+    "invitation_code":"fakfak123",
     "location":"Indonesia",
     "balance":"1000000000",
     "UserId":"1"
@@ -18,7 +18,7 @@
   {
     "id":3,
     "name":"Waerebo",
-    "invitation":"pakbowo",
+    "invitation_code":"pakbowo",
     "location":"Indonesia",
     "balance":"1000000000",
     "UserId":"1"
