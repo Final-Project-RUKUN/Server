@@ -53,6 +53,15 @@ module.exports = (sequelize, DataTypes) => {
         }
       }
     },
+    push_token: {
+      type: DataTypes.STRING,
+      validate: {
+        notEmpty: {
+          args: true,
+          msg: "Token is required"
+        }
+      }
+    },
     VillageId: DataTypes.INTEGER
   }, {
     sequelize,

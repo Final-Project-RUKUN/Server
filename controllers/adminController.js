@@ -7,11 +7,12 @@ const createToken = require('../helpers/useToken')
 class AdminController {
 
   static async registerAdmin(req, res, next) {
-    const { name, username, password, role, nameVillage, location, balance } = req.body
-    console.log(req.body);
+    const { name, username, password, nameVillage, location, balance, push_token } = req.body
+    
     try {
+        const role = 'admin'
         const invitation_code = createToken()
-        const user = await User.create({ name, username, password, role })
+        const user = await User.create({ name, username, password, role, push_token })
         
         const village = await Village.create({ name: nameVillage, location, invitation_code, balance, UserId: user.id})
 
@@ -19,19 +20,23 @@ class AdminController {
 
         res.status(201).json({ message: 'Success Crete User and Village', invitation_code})
     } catch (error) {
-      next(error)
+      if (Array.isArray(error)) {
+        next({ name : 'SequelizeValidationError', errors: error })
+      } else {
+        next(error)
+      }
     }
   }
 
   static async loginAdmin(req, res, next) {
-    const { username, password, role } = req.body
+    const { username, password } = req.body
     try {
         const user = await User.findOne({ where: { username }})
         
         if (user) {
           const isPassword = comparePassword( password, user.password )
           
-          if (isPassword && role === 'admin') {
+          if (isPassword && user.role === 'admin') {
             const access_token = generateToken({ id: user.id, username: user.username })
             
             res.status(200).json(access_token)

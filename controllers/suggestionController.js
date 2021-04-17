@@ -20,8 +20,14 @@ class SuggestionConroller {
 
     try {
       const suggestion = await Suggestion.findByPk(id)
+      if (suggestion) {
+        res.status(200).json(suggestion)
+      } else {
+        next({
+          code: 40,
 
-      res.status(200).json(suggestion)
+        })
+      }
     } catch (error) {
       next(error)
     }
@@ -34,7 +40,7 @@ class SuggestionConroller {
     try {
       const dataUpdate = await Suggestion.create({title, description, UserId: id, VillageId})
       
-      res.status(200).json(dataUpdate)
+      res.status(201).json(dataUpdate)
     } catch (error) {
       next(error)
     }

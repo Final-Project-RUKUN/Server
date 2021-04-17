@@ -56,6 +56,15 @@ module.exports = (sequelize, DataTypes) => {
         }
       }
     },
+    status: {
+      type: DataTypes.STRING,
+      validate: {
+        notEmpty: {
+          args: true,
+          msg: "Status is required"
+        }
+      }
+    },
     UserId: DataTypes.INTEGER,
     VillageId: DataTypes.INTEGER
   }, {

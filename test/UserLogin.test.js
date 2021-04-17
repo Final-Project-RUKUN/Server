@@ -1,19 +1,18 @@
 const request = require('supertest')
-const app = require('../../app')
+const app = require('../app')
 
 describe('TESTING /users/register', () => {
-  let userMember = { name: "Makmur", username: "MakmurJaya", password: "123asd", role: "member", invitation_code: "asam" }
-  let userAdmin = { name: "Rendro", username: "Rendro", password: "123456", role: "admin"}
-
-  it('Should return reponse with status code 201', function(done) {
+  let user = { username: "MakmurJaya", password: "123asd" }
+  
+  it('Should return reponse with status code 200', function(done) {
 
     request(app)
       .post('/user/login')
-      .send(userAdmin)
+      .send(user)
       .end(function(err, res) {
         if (err) done(err)
         else {
-          expect(res.statusCode).toEqual(201)
+          expect(res.statusCode).toEqual(200)
           expect(typeof res.body).toEqual("string")
           done()
         }
@@ -34,7 +33,7 @@ describe('TESTING /users/register', () => {
             expect(res.statusCode).toEqual(401)
             expect(typeof res.body).toEqual("object")
             done()
-          }
+            }
         })
   })
 
@@ -65,7 +64,6 @@ describe('TESTING /users/register', () => {
         .end(function(err, res) {
           if (err) done(err)
           else {
-            console.log(res.body);
             expect(res.statusCode).toEqual(401)
             expect(typeof res.body).toEqual("object")
             done()

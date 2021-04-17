@@ -1,5 +1,5 @@
 const { verifyToken } = require('../helpers/useJwt')
-const { User } = require('../models')
+const { User, Suggestion, Transaction } = require('../models')
 
 const authenticate = async (req, res, next) =>{
     try {
@@ -27,8 +27,33 @@ const authenticate = async (req, res, next) =>{
     }
 }
 
-const authorize = (req, res, next) =>{
-    let { id } = req.currentUser
+const authorize = async (req, res, next) =>{
+  let { id } = req.currentUser
+  try {
+    const user = await User.findByPk(id)
+    if (user.role === 'admin') {
+      next()
+    } else {
+      if (req.params.id) {
+        const { id: SuggestionId } = req.params
+        
+        const suggestion = await Suggestion.findByPk(SuggestionId)
+
+        if (suggestion) {
+          next()
+        } else {
+          next({ status : 401,
+            message : 'Unauthorized'
+          })
+        }
+      }
+      next({ status : 401,
+        message : 'Unauthorized'
+      })
+    }
+  } catch (error) {
+    next(error)
+  }
 }
 
 module.exports = { authenticate, authorize }
