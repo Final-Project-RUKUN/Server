@@ -25,7 +25,7 @@ class AdminController {
 
   static async loginAdmin(req, res, next) {
     console.log(req.body, 'login admin');
-    const { username, password, role } = req.body
+    const { username, password } = req.body
     try {
         const user = await User.findOne({ where: { username }})
         
@@ -33,7 +33,7 @@ class AdminController {
           const isPassword = comparePassword( password, user.password )
           console.log(isPassword, ' cek isPassword');
           
-          if (isPassword && role === 'admin') {
+          if (isPassword && user.role === 'admin') {
             console.log('masuk if ok');
             const access_token = generateToken({ id: user.id, username: user.username })
             
