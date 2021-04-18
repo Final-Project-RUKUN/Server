@@ -18,7 +18,7 @@ class TransactionController {
   }
 
   static async addTransaction(req, res, next) {
-    const { title, amount, category, note, type } = req.body
+    const { title, amount, category, note, type, status } = req.body
     const { id, VillageId } = req.currentUser
     
     try {
@@ -28,7 +28,7 @@ class TransactionController {
 
         await Village.update({ balance: newBalance }, { where: { id: VillageId }})
 
-        const dataCreate = await Transaction.create({ title, amount, category, note, type, VillageId, UserId: id })    
+        const dataCreate = await Transaction.create({ title, amount, category, note, type, VillageId, UserId: id, status })    
         res.status(201).json(dataCreate)
       } else {
         const { balance } = await Village.findByPk(VillageId)
@@ -36,7 +36,7 @@ class TransactionController {
 
         await Village.update({ balance: newBalance }, { where: { id: VillageId }})
 
-        const dataCreate = await Transaction.create({ title, amount, category, note, type, VillageId, UserId: id })
+        const dataCreate = await Transaction.create({ title, amount, category, note, type, VillageId, UserId: id, status })
         res.status(201).json(dataCreate)
       }
     } catch (error) {

@@ -5,7 +5,6 @@ class VillageController {
     const { VillageId } = req.currentUser
     try {
       
-      // const id = 31
       const data = await Village.findByPk(VillageId, { include: User })
 
       res.status(200).json(data)

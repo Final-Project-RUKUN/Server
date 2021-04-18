@@ -3,6 +3,6 @@ const TransactionController = require('../controllers/transactionController')
 
 route.get('/', TransactionController.fetchTransaction)
 
-route.post('/add', TransactionController.addTransaction)
+route.post('/', TransactionController.addTransaction)
 
 module.exports = route

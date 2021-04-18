@@ -23,7 +23,6 @@ class UserController {
       }
     } catch (error) {
       next(error)
-      console.log(error);
     }
   }
 
@@ -39,14 +38,14 @@ class UserController {
   }
 
   static async register(req, res, next) {
-    const { name, username, password, invitation_code } = req.body
+    const { name, username, password, invitation_code, push_token } = req.body
     try {
       const role = 'member'
-      
+
       const village = await Village.findOne({ where: { invitation_code }})
 
       if (village) {
-        const user = await User.create({ name, username, password, role, VillageId: village.id })
+        const user = await User.create({ name, username, password, role, VillageId: village.id, push_token })
 
         res.status(201).json(user)
       } else {
@@ -73,7 +72,7 @@ class UserController {
     const { id } = req.params
 
     try {
-      await User.destroy({ where: id })
+      await User.destroy({ where: { id } })
 
       res.status(200).json({ message: "Successfully deleted user" })
     } catch (error) {

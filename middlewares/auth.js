@@ -1,13 +1,14 @@
 const { verifyToken } = require('../helpers/useJwt')
-const { User, Suggestion, Transaction } = require('../models')
+const { User, Suggestion } = require('../models')
 
 const authenticate = async (req, res, next) =>{
     try {
         let { access_token } = req.headers
         let decoded = verifyToken(access_token)
-        console.log(decoded);
+
         if (decoded) {
             const user = await User.findOne({where: { username: decoded.username } })
+
             if (user) {
                 req.currentUser = { id : user.id, role: user.role, VillageId: user.VillageId }
                 next()
@@ -22,38 +23,55 @@ const authenticate = async (req, res, next) =>{
           })
         }
     } catch (error) {
-      console.log(error);
-        next(error)
+      next(error)
     }
 }
 
 const authorize = async (req, res, next) =>{
-  let { id } = req.currentUser
+  const { id } = req.currentUser
+  const { id: SuggestionId } = req.params
   try {
-    const user = await User.findByPk(id)
-    if (user.role === 'admin') {
-      next()
-    } else {
-      if (req.params.id) {
-        const { id: SuggestionId } = req.params
-        
-        const suggestion = await Suggestion.findByPk(SuggestionId)
+    const suggestion = await Suggestion.findByPk(SuggestionId)
 
-        if (suggestion) {
-          next()
-        } else {
-          next({ status : 401,
-            message : 'Unauthorized'
-          })
-        }
+    if (suggestion) {
+      if (suggestion.UserId === id) {
+        next()
+      } else {
+        next({ code : 401,
+          message : 'Unauthorized'
+        })
       }
-      next({ status : 401,
+    } else  {
+      next({code : 401,
         message : 'Unauthorized'
-      })
+      })    
     }
   } catch (error) {
     next(error)
   }
 }
 
-module.exports = { authenticate, authorize }
+const authorizeAdmin = async (req, res, next) =>{
+  const { id } = req.currentUser
+  try {
+    const user = await User.findByPk(id)
+    
+    if (user) {
+      if (user.role === 'admin') {
+        next()
+      } else {
+        next({ code : 401,
+          message : 'Unauthorized'
+        })
+      }
+    } else  {
+      next({code : 401,
+        message : 'Unauthorized'
+      })    
+    }
+  } catch (error) {
+    next(error)
+  }
+}
+
+module.exports = { authenticate, authorize, authorizeAdmin }

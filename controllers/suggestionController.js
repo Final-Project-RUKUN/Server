@@ -24,8 +24,8 @@ class SuggestionConroller {
         res.status(200).json(suggestion)
       } else {
         next({
-          code: 40,
-
+          code: 404,
+          message: 'Suggeston Not Found'
         })
       }
     } catch (error) {
@@ -38,9 +38,9 @@ class SuggestionConroller {
     const { id, VillageId } = req.currentUser
 
     try {
-      const dataUpdate = await Suggestion.create({title, description, UserId: id, VillageId})
+      const suggestion = await Suggestion.create({title, description, UserId: id, VillageId})
       
-      res.status(201).json(dataUpdate)
+      res.status(201).json(suggestion)
     } catch (error) {
       next(error)
     }
@@ -48,13 +48,12 @@ class SuggestionConroller {
   static async updateSuggestion(req, res, next){
     const { title, description } = req.body
     const { id, VillageId } = req.currentUser
-    const{ id : idSggstn } = req.prams
+    const{ id : idSuggestion } = req.params
 
     try {
-      
-      const dataUpdate = await Suggestion.update({title, description, UserId: id, VillageId},{ where: { id: idSggstn } })
-      
-      res.status(200).json(dataUpdate)
+      await Suggestion.update({title, description, UserId: id, VillageId},{ where: { id: idSuggestion } })
+
+      res.status(200).json({ message: 'Successfully updated suggestion.'})
     } catch (error) {
       next(error)
     }
@@ -63,10 +62,12 @@ class SuggestionConroller {
     const { id } = req.params
 
     try {
-      await Suggestion.destroy({ where: id })
+      console.log('jalannnn');
+      await Suggestion.destroy({ where : { id }, returning : true })
 
       res.status(200).json({ message: 'Suggestion has been successfully deleted.'})
     } catch (error) {
+      console.log(error);
       next(error)
     }
   }

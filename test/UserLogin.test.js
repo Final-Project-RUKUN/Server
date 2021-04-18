@@ -1,7 +1,7 @@
 const request = require('supertest')
 const app = require('../app')
 
-describe('TESTING /users/register', () => {
+describe('TESTING /users/login', () => {
   let user = { username: "MakmurJaya", password: "123asd" }
   
   it('Should return reponse with status code 200', function(done) {
@@ -30,8 +30,10 @@ describe('TESTING /users/register', () => {
         .end(function(err, res) {
           if (err) done(err)
           else {
-            expect(res.statusCode).toEqual(401)
+            expect(res.statusCode).toEqual(404)
             expect(typeof res.body).toEqual("object")
+            expect(res.body).toHaveProperty("message")
+            expect(typeof res.body.message).toEqual("string")
             done()
             }
         })
@@ -48,8 +50,10 @@ describe('TESTING /users/register', () => {
         .end(function(err, res) {
           if (err) done(err)
           else {
-            expect(res.statusCode).toEqual(401)
+            expect(res.statusCode).toEqual(404)
             expect(typeof res.body).toEqual("object")
+            expect(res.body).toHaveProperty("message")
+            expect(typeof res.body.message).toEqual("string")
             done()
           }
         })
@@ -64,8 +68,9 @@ describe('TESTING /users/register', () => {
         .end(function(err, res) {
           if (err) done(err)
           else {
-            expect(res.statusCode).toEqual(401)
-            expect(typeof res.body).toEqual("object")
+            expect(res.statusCode).toEqual(500)
+            expect(res.body).toHaveProperty("message")
+            expect(typeof res.body.message).toEqual("string")
             done()
           }
         })

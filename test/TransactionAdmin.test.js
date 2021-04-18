@@ -5,11 +5,13 @@ const { User } = require('../models')
 
 let access_token = null
 
-beforeAll(function async (done){
+beforeAll(async function(done){
   try {
-    const data = await User.findOne({where: {username: "prasatya"}})
+    const user = await User.findOne({where: {username: "Rendro"}})
     
-    access_token = jwt.sign({id: data.id, name: data.name}, process.env.SECRET)
+    access_token = jwt.sign({ id: user.id, username: user.username }, process.env.KEY)
+    
+    console.log(access_token);
     done()
      
   } catch (error) {
@@ -24,8 +26,9 @@ describe("SUCCESS /transactions", function(){
       title: "Iuran Sampah",
       amount: 10,
       category: "iuran",
-      notes: "iuran sampah bulanan",
-      type: "income"
+      note: "iuran sampah bulanan",
+      type: "income",
+      status: 'panding'
     }
     request(app)
       .post("/transactions")
@@ -39,29 +42,31 @@ describe("SUCCESS /transactions", function(){
           expect(typeof res.body).toEqual("object")
           expect(res.body).toHaveProperty("id")
           expect(typeof res.body.id).toEqual("number")
-          expect(res.body).toHaveProperty("title", body.title)
+          expect(res.body).toHaveProperty("title")
           expect(typeof res.body.title).toEqual("string")
-          expect(res.body).toHaveProperty("amount", body.amount)
+          expect(res.body).toHaveProperty("amount")
           expect(typeof res.body.amount).toEqual("number")
-          expect(res.body).toHaveProperty("category", body.category)
+          expect(res.body).toHaveProperty("category")
           expect(typeof res.body.category).toEqual("string")
-          expect(res.body).toHaveProperty("notes", body.notes)
-          expect(typeof res.body.notes).toEqual("string")
-          expect(res.body).toHaveProperty("type", body.type)
+          expect(res.body).toHaveProperty("note")
+          expect(typeof res.body.note).toEqual("string")
+          expect(res.body).toHaveProperty("type")
           expect(typeof res.body.type).toEqual("string")
-
+          expect(res.body).toHaveProperty("type")
+          expect(typeof res.body.status).toEqual("string")
           done()
         }
     })
   })
   //*FETCH TRANSACTION
-  it("POST /transactions - 201 OK", function(done) {
+  it("POST /transactions - 200 OK", function(done) {
     const body = {
       title: "Iuran Sampah",
       amount: 10,
       category: "iuran",
-      notes: "iuran sampah bulanan",
-      type: "income"
+      note: "iuran sampah bulanan",
+      type: "income",
+      status: 'panding'
     }
     request(app)
       .get("/transactions")
@@ -72,19 +77,19 @@ describe("SUCCESS /transactions", function(){
           done(err)
         } else {
           expect(res.statusCode).toEqual(200)
-          expect(Array.isArray(res.body)).toEqual(true)
-          expect(res.body[0]).toHaveProperty("id")
-          expect(typeof res.body[0].id).toEqual("number")
-          expect(res.body[0]).toHaveProperty("title", body.title)
-          expect(typeof res.body[0].title).toEqual("string")
-          expect(res.body[0]).toHaveProperty("amount", body.amount)
-          expect(typeof res.body[0].amount).toEqual("number")
-          expect(res.body[0]).toHaveProperty("category", body.category)
-          expect(typeof res.body[0].category).toEqual("string")
-          expect(res.body[0]).toHaveProperty("notes", body.notes)
-          expect(typeof res.body[0].notes).toEqual("string")
-          expect(res.body[0]).toHaveProperty("type", body.type)
-          expect(typeof res.body[0].type).toEqual("string")
+          expect(Array.isArray(res.body.Transactions)).toEqual(true)
+          expect(res.body.Transactions[0]).toHaveProperty("id")
+          expect(typeof res.body.Transactions[0].id).toEqual("number")
+          expect(res.body.Transactions[0]).toHaveProperty("title")
+          expect(typeof res.body.Transactions[0].title).toEqual("string")
+          expect(res.body.Transactions[0]).toHaveProperty("amount")
+          expect(typeof res.body.Transactions[0].amount).toEqual("number")
+          expect(res.body.Transactions[0]).toHaveProperty("category")
+          expect(typeof res.body.Transactions[0].category).toEqual("string")
+          expect(res.body.Transactions[0]).toHaveProperty("note")
+          expect(typeof res.body.Transactions[0].note).toEqual("string")
+          expect(res.body.Transactions[0]).toHaveProperty("type")
+          expect(typeof res.body.Transactions[0].type).toEqual("string")
 
           done()
         }
@@ -100,7 +105,7 @@ describe("ERROR POST /transactions", function(){
       title: "",
       amount: 10,
       category: "iuran",
-      notes: "iuran sampah bulanan",
+      note: "iuran sampah bulanan",
       type: "income"
     }
 
@@ -110,50 +115,17 @@ describe("ERROR POST /transactions", function(){
       .set({ access_token })
       .send(errorBody)
       .end(function(err,res){
-        if(err) {
-          done(err)
-        } else {
+        if(err) done(err)
+        else {
           expect(res.statusCode).toEqual(400)
-          expect(Array.isArray(res.body)).toEqual(true)
-          expect(typeof res.body[0]).toEqual("object")
-          expect(res.body[0]).toEqual({"message": "Title is required"})
+          expect(Array.isArray(res.body.message)).toEqual(true)
+          expect(typeof res.body.message[0]).toEqual("string")
+          expect(res.body.message[0]).toEqual("Title is required")
 
           done()
         }
       })
   })
-
-  // //Suggestion Amount null
-  // it("POST /transactions - 400 ERROR (Amount Null)", function(done) {
-  //   const body = {
-  //     title: "Iuran Bulanan",
-  //     amount: null,
-  //     category: "iuran",
-  //     notes: "iuran sampah bulanan",
-  //     type: "income"
-  //   }
-
-  //   const headers = {
-  //     access_token: access_token_value
-  //   }
-    
-  //   request(app)
-  //     .post("/transactions")
-  //     .set(headers)
-  //     .send(body)
-  //     .end(function(err,res){
-  //       if(err) {
-  //         done(err)
-  //       } else {
-  //         expect(res.statusCode).toEqual(400)
-  //         expect(Array.isArray(res.body)).toEqual(true)
-  //         expect(typeof res.body[0]).toEqual("object")
-  //         expect(res.body[0]).toEqual({"message": "Amount is required"})
-
-  //         done()
-  //       }
-  //     })
-  // })
 
   //Suggestion Amount not Float
   it("POST /transactions - 400 ERROR (Amount not Float)", function(done) {
@@ -161,7 +133,7 @@ describe("ERROR POST /transactions", function(){
       title: "Iuran Bulanan",
       amount: "RP.10000",
       category: "iuran",
-      notes: "iuran sampah bulanan",
+      note: "iuran sampah bulanan",
       type: "income"
     }
     
@@ -172,11 +144,10 @@ describe("ERROR POST /transactions", function(){
       .end(function(err,res){
         if(err) done(err)
         else {
-          expect(res.statusCode).toEqual(400)
-          expect(Array.isArray(res.body)).toEqual(true)
-          expect(typeof res.body[0]).toEqual("object")
-          expect(res.body[0]).toEqual({"message": "Amount must be a float"})
-
+          expect(res.statusCode).toEqual(500)
+          expect(typeof res.body.message).toEqual('string')
+          expect(typeof res.body.message).toEqual("string")
+          expect(res.body.message).toEqual(`invalid input syntax for type integer: "NaN"`)
           done()
         }
       })
@@ -188,7 +159,7 @@ describe("ERROR POST /transactions", function(){
       title: "Iuran Bulanan",
       amount: 100000,
       category: "",
-      notes: "iuran sampah bulanan",
+      note: "iuran sampah bulanan",
       type: "income"
     }
     
@@ -201,9 +172,9 @@ describe("ERROR POST /transactions", function(){
           done(err)
         } else {
           expect(res.statusCode).toEqual(400)
-          expect(Array.isArray(res.body)).toEqual(true)
-          expect(typeof res.body[0]).toEqual("object")
-          expect(res.body[0]).toEqual({"message": "Category is required"})
+          expect(Array.isArray(res.body.message)).toEqual(true)
+          expect(typeof res.body.message[0]).toEqual("string")
+          expect(res.body.message[0]).toEqual("Category is required")
 
           done()
         }
@@ -216,7 +187,7 @@ describe("ERROR POST /transactions", function(){
       title: "Iuran Bulanan",
       amount: 100000,
       category: "iuran",
-      notes: "",
+      note: "",
       type: "income"
     }
     
@@ -228,9 +199,9 @@ describe("ERROR POST /transactions", function(){
         if(err) done(err)
         else {
           expect(res.statusCode).toEqual(400)
-          expect(Array.isArray(res.body)).toEqual(true)
-          expect(typeof res.body[0]).toEqual("object")
-          expect(res.body[0]).toEqual({"message": "Notes is required"})
+          expect(Array.isArray(res.body.message)).toEqual(true)
+          expect(typeof res.body.message[0]).toEqual("string")
+          expect(res.body.message[0]).toEqual("Note is required")
 
           done()
         }
@@ -243,7 +214,7 @@ describe("ERROR POST /transactions", function(){
       title: "Iuran Bulanan",
       amount: 100000,
       category: "iuran",
-      notes: "iuran sampah bulanan",
+      note: "iuran sampah bulanan",
       type: ""
     }
     
@@ -255,9 +226,9 @@ describe("ERROR POST /transactions", function(){
         if(err) done(err)
         else {
           expect(res.statusCode).toEqual(400)
-          expect(Array.isArray(res.body)).toEqual(true)
-          expect(typeof res.body[0]).toEqual("object")
-          expect(res.body[0]).toEqual({"message": "Type is required"})
+          expect(Array.isArray(res.body.message)).toEqual(true)
+          expect(typeof res.body.message[0]).toEqual("string")
+          expect(res.body.message[0]).toEqual("Type is required")
 
           done()
         }

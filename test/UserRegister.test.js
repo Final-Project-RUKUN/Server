@@ -1,8 +1,8 @@
 const request = require('supertest')
-const app = require('../../app')
+const app = require('../app')
 
 describe('TESTING /users/register', () => {
-  let userMember = { name: "Makmur", username: "MakmurJaya", password: "123asd", invitation_code: "asam" }
+  let userMember = { name: "Purwiro", username: "Purwiro", password: "123asd", invitation_code: "0l5oz", push_token: "xaxsxa"}
 
   it('Should return reponse with status code 201', function(done) {
 
@@ -13,16 +13,26 @@ describe('TESTING /users/register', () => {
         if (err) done(err)
         else {
           expect(res.statusCode).toEqual(201)
-          expect(Array.isArray(res.body)).toEqual(true)
+          expect(typeof res.body).toEqual('object')
+          expect(res.body).toHaveProperty("id")
+          expect(typeof res.body.id).toEqual("number")
+          expect(res.body).toHaveProperty("name")
+          expect(typeof res.body.name).toEqual("string")
+          expect(res.body).toHaveProperty("username")
+          expect(typeof res.body.username).toEqual("string")
+          expect(res.body).toHaveProperty("role")
+          expect(typeof res.body.role).toEqual("string")
+          expect(res.body).toHaveProperty("VillageId")
+          expect(typeof res.body.VillageId).toEqual("number")
           done()
         }
       })
   })
 
   it('Should return reponse with status code 400', function(done) {
-    let {name, username, password, role, invitation_code } = userMember
+    let {name, username, password, invitation_code } = userMember
 
-    let data = { name, username, password : '', role, invitation_code }
+    let data = { name, username, password : '', invitation_code }
 
     request(app)
       .post(`/user/register`)
@@ -31,16 +41,16 @@ describe('TESTING /users/register', () => {
         if (err) done(err)
         else {
           expect(res.statusCode).toEqual(400)
-          expect(Array.isArray(res.body)).toEqual(true)
+          expect(Array.isArray(res.body.message)).toEqual(true)
           done()
         }
       })
   })
 
   it('Should return reponse with status code 400', function(done) {
-    let {name, username, password, role, invitation_code } = userMember
+    let {name, username, password, invitation_code } = userMember
 
-    let data = { name, username : '', password, role, invitation_code }
+    let data = { name, username : '', password, invitation_code }
 
       request(app)
         .post(`/user/register`)
@@ -49,16 +59,16 @@ describe('TESTING /users/register', () => {
           if (err) done(err)
           else {
             expect(res.statusCode).toEqual(400)
-            expect(Array.isArray(res.body)).toEqual(true)
+            expect(Array.isArray(res.body.message)).toEqual(true)
             done()
           }
         })
   })
 
-  it('Should return reponse with status code 401', function(done) {
-    let {name, username, password, role, invitation_code } = userMember
+  it('Should return reponse with status code 404', function(done) {
+    let {name, username, password, invitation_code } = userMember
 
-    let data = { name, username, password, role, invitation_code: ''} 
+    let data = { name, username, password, invitation_code: ''} 
 
       request(app)
         .post(`/user/register`)
@@ -66,16 +76,18 @@ describe('TESTING /users/register', () => {
         .end(function(err, res) {
           if (err) done(err)
           else {
-            expect(res.statusCode).toEqual(400)
-            expect(Array.isArray(res.body)).toEqual(true)
+            expect(res.statusCode).toEqual(404)
+            expect(typeof res.body).toEqual('object')
+            expect(res.body).toHaveProperty("message")
+            expect(typeof res.body.message).toEqual("string")
             done()
           }
         })
   })
   it('Should return reponse with status code 401', function(done) {
-    let {name, username, password, role, invitation_code } = userMember
+    let { name, username, password, invitation_code } = userMember
 
-    let data = { name, username, password, role: '', invitation_code} 
+    let data = { name: '', username, password, invitation_code} 
 
       request(app)
         .post(`/user/register`)
@@ -84,7 +96,7 @@ describe('TESTING /users/register', () => {
           if (err) done(err)
           else {
             expect(res.statusCode).toEqual(400)
-            expect(Array.isArray(res.body)).toEqual(true)
+            expect(Array.isArray(res.body.message)).toEqual(true)
             done()
           }
         })

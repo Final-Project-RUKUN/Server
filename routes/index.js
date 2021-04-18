@@ -18,8 +18,8 @@ route.use(authenticate)
 
 route.use('/villagers', villageRoute)
 
-route.use('/transaction', transactionRoute)
+route.use('/transactions', transactionRoute)
 
-route.use('/suggestion', suggestionRoute)
+route.use('/suggestions', suggestionRoute)
 
 module.exports = route
