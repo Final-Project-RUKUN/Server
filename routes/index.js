@@ -4,12 +4,15 @@ const villageRoute = require('./villageRoute')
 const transactionRoute = require('./transactionRoute')
 const suggestionRoute = require('./suggestioRoute')
 const adminRoute = require('./adminRoute')
+const midtransRoute = require('./midtransRoute')
 const { authenticate } = require('../middlewares/auth')
+
 
 route.get('/' ,(req, res)=>{
   res.send('gooooo')
 })
 
+route.use('/midtrans', midtransRoute)
 route.use('/user', userRoute)
 
 route.use('/admin', adminRoute)
