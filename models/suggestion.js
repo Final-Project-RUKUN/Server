@@ -29,6 +29,10 @@ module.exports = (sequelize, DataTypes) => {
         }
       }
     },
+    type:{
+      type: DataTypes.STRING,
+      defaultValue: "suggestions"
+    },
     UserId: DataTypes.INTEGER,
     VillageId: DataTypes.INTEGER
   }, {
