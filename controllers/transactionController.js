@@ -2,16 +2,30 @@ const { Transaction, Village, User } = require('../models')
 
 class TransactionController { 
 
-  static async fetchTransaction(req, res, next) {
+  static async fetchTransactions(req, res, next) {
     try {
       const { VillageId } = req.currentUser
 
-      const village = await Village.findByPk(VillageId, { include: [{
-        model:  Transaction,
-        include: User }]
+      const village = await Village.findByPk(VillageId, { 
+        include: [{
+          model:  Transaction,
+          order: [['id', 'ASC']],
+          include: User }]
       })
       
       res.status(200).json(village)
+    } catch (error) {
+      next(error)
+    }
+  }
+
+  static async fetchTransactionsUser(req, res, next) {
+    try {
+      const { id } = req.currentUser
+
+      const transactions = await Transaction.findAll({ where: { id }})
+      
+      res.status(200).json(transactions)
     } catch (error) {
       next(error)
     }

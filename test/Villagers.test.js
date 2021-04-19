@@ -57,23 +57,42 @@ describe("ROLE ADMIN CAN FETCH, EDIT AND DELETE USER", function(){
   })
 
   //DELETE USER
-  // it("DELETE /user - 200 OK", function(done) { 
+  it("DELETE /user - 200 OK", function(done) { 
     
-  //   request(app)
-  //     .delete("/user/23")
-  //     .set({ access_token })
-  //     .end(function(err, res){
-  //       if(err) done(err)
-  //       else {
-  //         expect(res.statusCode).toEqual(200)
-  //         expect(typeof res.body).toEqual("object")
-  //         expect(res.body).toHaveProperty("message")
-  //         expect(res.body.message).toEqual("Successfully deleted user")
+    request(app)
+      .delete("/user/23")
+      .set({ access_token : access_token_admin })
+      .end(function(err, res){
+        if(err) done(err)
+        else {
+          expect(res.statusCode).toEqual(200)
+          expect(typeof res.body).toEqual("object")
+          expect(res.body).toHaveProperty("message")
+          expect(res.body.message).toEqual("Successfully deleted user")
 
-  //         done()
-  //       }
-  //     })
-  // })
+          done()
+        }
+      })
+  })
+
+  //DELETE VILLAGE
+  it("DELETE /user - 200 OK", function(done) { 
+      
+    request(app)
+      .delete("/villagers/9")
+      .set({ access_token : access_token_admin })
+      .end(function(err, res){
+        if(err) done(err)
+        else {
+          expect(res.statusCode).toEqual(200)
+          expect(typeof res.body).toEqual("object")
+          expect(res.body).toHaveProperty("message")
+          expect(res.body.message).toEqual("Success Delete Village")
+
+          done()
+        }
+      })
+  })
 
   it("PUT /user - 200 OK", function(done) { 
     
@@ -96,8 +115,8 @@ describe("ROLE ADMIN CAN FETCH, EDIT AND DELETE USER", function(){
 
 //! SCOPE ERROR
 describe("ERROR UNAUTHORIZED", function(){
-  //CREATE suggestion
-  it("POST /villagers - 401 UNAUTHORIZED", function(done) {
+  //GET USER ERROR NOT ADMIN
+  it("GET /villagers - 401 UNAUTHORIZED", function(done) {
 
   request(app)
     .get("/villagers")
@@ -114,26 +133,44 @@ describe("ERROR UNAUTHORIZED", function(){
       })
   })
 
-  //DELETE USER
-  // it("DELETE /user - 200 OK", function(done) { 
+  //DELETE USER ERROR NOT ADMIN
+  it("DELETE /user - 401 UNAUTHORIZED", function(done) { 
     
-  //   request(app)
-  //     .delete("/user/23")
-  //     .set({ access_token })
-  //     .end(function(err, res){
-  //       if(err) done(err)
-  //       else {
-  //         expect(res.statusCode).toEqual(200)
-  //         expect(typeof res.body).toEqual("object")
-  //         expect(res.body).toHaveProperty("message")
-  //         expect(res.body.message).toEqual("Successfully deleted user")
+    request(app)
+      .delete("/user/24")
+      .set({ access_token : access_token_member })
+      .end(function(err, res){
+        if(err) done(err)
+        else {
+          expect(res.statusCode).toEqual(401)
+          expect(typeof res.body).toEqual("object")
+          expect(res.body).toHaveProperty("message")
+          expect(res.body.message).toEqual("Unauthorized")
+          done()
+        }
+      })
+  })
 
-  //         done()
-  //       }
-  //     })
-  // })
+  //DELETE VILLAGE ERROR NOT ADMIN
+  it("DELETE /user - 401 Unauthorized", function(done) { 
+      
+    request(app)
+      .delete("/villagers/8")
+      .set({ access_token : access_token_member })
+      .end(function(err, res){
+        if(err) done(err)
+        else {
+          expect(res.statusCode).toEqual(401)
+          expect(typeof res.body).toEqual("object")
+          expect(res.body).toHaveProperty("message")
+          expect(res.body.message).toEqual("Unauthorized")
+          done()
+        }
+      })
+  })
 
-  it("PUT /user - 200 OK", function(done) { 
+  //PUT  ERROR NOT ADMIN
+  it("PUT /user - 401 Unauthorized", function(done) { 
     
     request(app)
       .put("/admin/change/20")
@@ -145,7 +182,6 @@ describe("ERROR UNAUTHORIZED", function(){
           expect(typeof res.body).toEqual("object")
           expect(res.body).toHaveProperty("message")
           expect(res.body.message).toEqual("Unauthorized")
-
           done()
         }
       })

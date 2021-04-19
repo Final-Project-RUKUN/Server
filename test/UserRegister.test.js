@@ -2,7 +2,7 @@ const request = require('supertest')
 const app = require('../app')
 
 describe('TESTING /users/register', () => {
-  let userMember = { name: "Purwiro", username: "Purwiro", password: "123asd", invitation_code: "0l5oz", push_token: "xaxsxa"}
+  let userMember = { name: "Purwiro", username: "Purwiro1", password: "123asd", invitation_code: "0l5oz", push_token: "xaxsxa"}
 
   it('Should return reponse with status code 201', function(done) {
 

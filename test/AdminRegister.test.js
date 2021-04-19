@@ -3,7 +3,7 @@ const app = require('../app')
 
 //!POST SUCCESS
 describe('TESTING /users/register', () => {
-  let userAdmin = { name: "Bambang", username: "Bambang", password: "123456", nameVillage: "SukaJadi", location: "Jakarta", push_token: "dwadwdawd"}
+  let userAdmin = { name: "Bambang", username: "Bambang1", password: "123456", nameVillage: "SukaJadi", location: "Jakarta", push_token: "dwadwdawd"}
 
   it('Should return reponse with status code 201', function(done) {
 

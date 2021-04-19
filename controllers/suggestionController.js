@@ -6,6 +6,7 @@ class SuggestionConroller {
       const villageSuggestions = await Village.findByPk(VillageId, 
         { include: [{
           model:  Suggestion,
+          order: [['id', 'ASC']],
           include: User
       }]})
      
@@ -67,7 +68,6 @@ class SuggestionConroller {
 
       res.status(200).json({ message: 'Suggestion has been successfully deleted.'})
     } catch (error) {
-      console.log(error);
       next(error)
     }
   }

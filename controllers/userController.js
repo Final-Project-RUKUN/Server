@@ -39,6 +39,7 @@ class UserController {
 
   static async register(req, res, next) {
     const { name, username, password, invitation_code, push_token } = req.body
+    console.log('mausk');
     try {
       const role = 'member'
 
