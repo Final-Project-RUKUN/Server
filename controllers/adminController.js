@@ -39,7 +39,7 @@ class AdminController {
           if (isPassword && user.role === 'admin') {
             const access_token = generateToken({ id: user.id, username: user.username })
             
-            res.status(200).json({access_token, id: user.id})
+            res.status(200).json({access_token})
           } else {
             next({ code: 404, message: "Invalid Username/Password" })
           }
