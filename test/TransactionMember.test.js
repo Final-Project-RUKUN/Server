@@ -4,14 +4,18 @@ const app = require('../app')
 const { User } = require('../models')
 
 let access_token = null
+let another_token = null
 
 beforeAll(async function(done){
   try {
     const user = await User.findOne({where: {username: "Rendro"}})
     
-    access_token = jwt.sign({ id: user.id, username: user.username }, process.env.KEY)
+    const anotherUser = await User.findOne({where: {username: "Makarya"}})
     
-    console.log(access_token);
+    access_token = jwt.sign({ id: user.id, username: user.username }, process.env.KEY)
+
+    another_token = jwt.sign({ id: anotherUser.id, username: anotherUser.username }, process.env.KEY)
+  
     done()
      
   } catch (error) {
@@ -59,19 +63,11 @@ describe("SUCCESS /transactions", function(){
     })
   })
   //*FETCH TRANSACTION
-  it("POST /transactions - 200 OK", function(done) {
-    const body = {
-      title: "Iuran Sampah",
-      amount: 10,
-      category: "iuran",
-      note: "iuran sampah bulanan",
-      type: "income",
-      status: 'panding'
-    }
+  it("GET /transactions - 200 OK", function(done) {
+  
     request(app)
       .get("/transactions")
       .set({ access_token })
-      .send(body)
       .end(function(err,res){
         if(err) {
           done(err)
@@ -95,10 +91,66 @@ describe("SUCCESS /transactions", function(){
         }
     })
   })
+  
+  // GET TRANSACTION USER
+  it("GET /transactions/user - 200 OK", function(done) {
+ 
+    request(app)
+      .get("/transactions/user")
+      .set({ access_token })
+      .end(function(err,res){
+        if(err) {
+          done(err)
+        } else {
+          expect(res.statusCode).toEqual(200)
+          expect(Array.isArray(res.body)).toEqual(true)
+          expect(res.body[0]).toHaveProperty("id")
+          expect(typeof res.body[0].id).toEqual("number")
+          expect(res.body[0]).toHaveProperty("title")
+          expect(typeof res.body[0].title).toEqual("string")
+          expect(res.body[0]).toHaveProperty("amount")
+          expect(typeof res.body[0].amount).toEqual("number")
+          expect(res.body[0]).toHaveProperty("category")
+          expect(typeof res.body[0].category).toEqual("string")
+          expect(res.body[0]).toHaveProperty("note")
+          expect(typeof res.body[0].note).toEqual("string")
+          expect(res.body[0]).toHaveProperty("type")
+          expect(typeof res.body[0].type).toEqual("string")
+          done()
+        }
+    })
+  })
 })
 
 //! SCOPE FOR ERROR 
 describe("ERROR POST /transactions", function(){
+  //Suggestion Data Type not Valid  
+  it("POST /transactions - 400 ERROR (Data Type not Valid)", function(done) {
+    const errorBody = {
+      title: "Pak Bowo",
+      amount: 10,
+      category: "iuran",
+      note: "iuran sampah bulanan",
+      type: "xsaxas"
+    }
+
+    request(app)
+      .post("/transactions")
+      .set({ access_token })
+      .send(errorBody)
+      .end(function(err,res){
+        if(err) done(err)
+        else {
+          expect(res.statusCode).toEqual(400)
+          expect(typeof res.body).toEqual('object')
+          expect(typeof res.body.message).toEqual("string")
+          expect(res.body.message).toEqual("Invalid Data Type Payment")
+
+          done()
+        }
+      })
+  })
+
   //Suggestion Title Empty
   it("POST /transactions - 400 ERROR (Title empty)", function(done) {
     const errorBody = {
@@ -108,7 +160,6 @@ describe("ERROR POST /transactions", function(){
       note: "iuran sampah bulanan",
       type: "income"
     }
-
 
     request(app)
       .post("/transactions")
@@ -224,9 +275,9 @@ describe("ERROR POST /transactions", function(){
         if(err) done(err)
         else {
           expect(res.statusCode).toEqual(400)
-          expect(Array.isArray(res.body.message)).toEqual(true)
-          expect(typeof res.body.message[0]).toEqual("string")
-          expect(res.body.message[0]).toEqual("Type is required")
+          expect(typeof res.body).toEqual('object')
+          expect(typeof res.body.message).toEqual("string")
+          expect(res.body.message).toEqual("Invalid Data Type Payment")
           done()
         }
       })

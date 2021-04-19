@@ -4,6 +4,7 @@ const app = require('../app')
 const { User } = require('../models')
 
 let access_token = null
+let another_token = null
 const body = {
   title: "Ga Setuju Beli Kursi",
   description:"Karena kursi digudang sudah ada"
@@ -15,6 +16,10 @@ beforeAll(async function (done){
     const data = await User.findOne({where: {username: "MakmurJaya"}})
     
     access_token = jwt.sign({id: data.id, username: data.username}, process.env.KEY)
+
+    const user = await User.findOne({where: {username: "Rendro"}})
+    
+    another_token = jwt.sign({ id: user.id, username: user.username }, process.env.KEY)
 
     done() 
   } catch (error) {
@@ -92,7 +97,6 @@ describe("SUCCESS /suggestions", function(){
             expect(Array.isArray(res.body.message)).toEqual(true)
             expect(typeof res.body.message[0]).toEqual("string")
             expect(res.body.message[0]).toEqual("Title is required")
-            
             done()
           }
         })
@@ -116,117 +120,12 @@ describe("SUCCESS /suggestions", function(){
           expect(Array.isArray(res.body.message)).toEqual(true)
           expect(typeof res.body.message[0]).toEqual("string")
           expect(res.body.message[0]).toEqual("Description is required")
-          
           done()
         }
       })
     })
   })
 })
-
-
-describe(`PUT /suggestions/${id}`, function(){
-  //PUT suggestions
-  it(`PUT /suggestions/ - 200 OK`, function(done) {
-    const updateData = {
-      title: "Ga Setuju Beli Kursi",
-      description:"Karena kursi digudang sudah ada"
-    }
-
-    request(app)
-      .put(`/suggestions/${id}`)
-      .set({ access_token })
-      .send(updateData)
-      .end(function(err, res){
-        if(err) done(err)
-        else {
-          expect(res.statusCode).toEqual(200)
-          expect(typeof res.body).toEqual("object")
-          expect(res.body).toHaveProperty("message")
-          expect(typeof res.body.message).toEqual("string")
-          expect(res.body.message).toEqual("Successfully updated suggestion.")
-
-          done()
-        }
-      })
-  })
-
-  describe(`ERROR PUT /suggestions/:id`, function(){
-    //Suggestion Not Own User
-    it("PUT /suggestions/1 - 401 ERROR (Not Authorized)", function(done) {
-      const body = {
-        title: "iuran",
-        description:"Sampah banyak tersendat di selokan",
-      }
-      
-      console.log(id + 1);
-
-      request(app)
-        .put(`/suggestions/${id + 1}`)
-        .set({ access_token })
-        .send(body)
-        .end(function(err,res){
-          if(err) done(err)
-          else {
-            expect(res.statusCode).toEqual(401)
-            expect(typeof res.body).toEqual("object")
-            expect(res.body).toHaveProperty("message")
-            expect(res.body.message).toEqual("Unauthorized")
-            done()
-          }
-        })
-    })
-  
-    //Suggestion Title Empty
-    it(`PUT /suggestions/${id} - 400 ERROR (Title empty)`, function(done) {
-      const body = {
-        title: "",
-        description:"Sampah banyak tersendat di selokan",
-      }
-  
-      request(app)
-        .put(`/suggestions/${id}`)
-        .set({ access_token })
-        .send(body)
-        .end(function(err,res){
-          if(err) done(err)
-          else {
-            expect(res.statusCode).toEqual(400)
-            expect(Array.isArray(res.body.message)).toEqual(true)
-            expect(typeof res.body.message[0]).toEqual("string")
-            expect(res.body.message[0]).toEqual("Title is required")
-  
-            done()
-          }
-        })
-    })
-  
-    //Suggestion Description Empty
-    it("PUT /suggestions/2 - 400 ERROR (Description empty)", function(done) {
-      const errBody = {
-        title: "Iuran",
-        description: "",
-      }
-      
-      request(app)
-        .put(`/suggestions/${id}`)
-        .set({ access_token })
-        .send(errBody)
-        .end(function(err, res){
-          if(err) done(err)
-          else {
-            expect(res.statusCode).toEqual(400)
-            expect(Array.isArray(res.body.message)).toEqual(true)
-            expect(typeof res.body.message[0]).toEqual("string")
-            expect(res.body.message[0]).toEqual("Description is required")
-  
-            done()
-          }
-        })
-    })
-  })    
-})
-
 
 //!SCOPE FOR DELETE SUGGESTION
 describe(`DELETE /suggestions`, function(){
@@ -264,6 +163,25 @@ describe(`DELETE /suggestions`, function(){
           expect(res.body).toHaveProperty("message")
           expect(res.body.message).toEqual("Unauthorized")
 
+          done()
+        }
+      })
+  })
+
+  //Suggestion Not User's
+  it("DELETE /suggestions/1 - 401 ERROR (Unauthorized)", function(done) {
+
+    request(app)
+      .delete(`/suggestions/qwe`)
+      .set({ access_token })
+      .end(function(err,res){
+        if(err) done(err)
+        else {
+          expect(res.statusCode).toEqual(500)
+          expect(typeof res.body).toEqual("object")
+          expect(res.body).toHaveProperty("message")
+          expect(res.body.message).toEqual(`invalid input syntax for type integer: "qwe"`)
+        
           done()
         }
       })

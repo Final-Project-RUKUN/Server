@@ -9,8 +9,9 @@ class TransactionController {
       const village = await Village.findByPk(VillageId, { 
         include: [{
           model:  Transaction,
-          order: [['id', 'ASC']],
-          include: User }]
+          include: User, 
+          order: [['User', 'createdAt', 'DESC']]
+        }]
       })
       
       res.status(200).json(village)
@@ -21,9 +22,12 @@ class TransactionController {
 
   static async fetchTransactionsUser(req, res, next) {
     try {
-      const { id } = req.currentUser
+      const { id, VillageId } = req.currentUser
 
-      const transactions = await Transaction.findAll({ where: { id }})
+      const transactions = await Transaction.findAll({ 
+        where: { UserId: id, VillageId },
+        order: [['id', 'DESC']]
+      })
       
       res.status(200).json(transactions)
     } catch (error) {
@@ -36,7 +40,7 @@ class TransactionController {
     const { id, VillageId } = req.currentUser
     
     try {
-      if (type === 'expence') {
+      if (type === 'expanse') {
         const { balance } = await Village.findByPk(VillageId)
         const newBalance = balance - +amount
 
@@ -44,7 +48,7 @@ class TransactionController {
 
         const dataCreate = await Transaction.create({ title, amount, category, note, type, VillageId, UserId: id, status })    
         res.status(201).json(dataCreate)
-      } else {
+      } else if(type === 'income') {
         const { balance } = await Village.findByPk(VillageId)
         const newBalance = +balance + +amount
 
@@ -52,6 +56,11 @@ class TransactionController {
 
         const dataCreate = await Transaction.create({ title, amount, category, note, type, VillageId, UserId: id, status })
         res.status(201).json(dataCreate)
+      } else {
+        next({
+          code: 400,
+          message: 'Invalid Data Type Payment'
+        })
       }
     } catch (error) {
       next(error)

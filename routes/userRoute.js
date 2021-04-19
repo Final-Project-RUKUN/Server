@@ -8,7 +8,7 @@ route.post('/register', UserController.register)
 
 route.use( authenticate, authorizeAdmin )
 
-route.get('/:id', UserController.getUser)
+route.get('/', UserController.getUser)
 
 route.delete('/:id', UserController.deleteUser)
 

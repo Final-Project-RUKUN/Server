@@ -19,7 +19,7 @@ describe('TESTING /users/login', () => {
       })
   })
 
-  it('Should return reponse with status code 401', function(done) {
+  it('Should return reponse with status code 404', function(done) {
       let {username, password} = user
 
       let data = {username, password : 'xsaxas'}
@@ -39,7 +39,7 @@ describe('TESTING /users/login', () => {
         })
   })
 
-  it('Should return reponse with status code 401', function(done) {
+  it('Should return reponse with status code 404', function(done) {
     let {username, password } = user
 
     let data = {username : 'sabana', password}
@@ -59,7 +59,7 @@ describe('TESTING /users/login', () => {
         })
   })
 
-  it('Should return reponse with status code 401', function(done) {
+  it('Should return reponse with status code 500', function(done) {
       let data = {} 
 
       request(app)

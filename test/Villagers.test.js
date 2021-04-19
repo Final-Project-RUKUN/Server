@@ -11,6 +11,7 @@ let access_token_admin = null
 beforeAll(async function(done){
   try {
     const dataAdmin = await User.findOne({where: {username: "Makarya"}})
+
     const dataMember = await User.findOne({where: {username: "MakmurJaya"}})
 
     access_token_admin = jwt.sign({id: dataAdmin.id, username: dataAdmin.username}, process.env.KEY)
@@ -60,7 +61,7 @@ describe("ROLE ADMIN CAN FETCH, EDIT AND DELETE USER", function(){
   it("DELETE /user - 200 OK", function(done) { 
     
     request(app)
-      .delete("/user/23")
+      .delete("/user/123")
       .set({ access_token : access_token_admin })
       .end(function(err, res){
         if(err) done(err)
@@ -75,11 +76,11 @@ describe("ROLE ADMIN CAN FETCH, EDIT AND DELETE USER", function(){
       })
   })
 
-  //DELETE VILLAGE
-  it("DELETE /user - 200 OK", function(done) { 
+  // DELETE VILLAGE
+  it("DELETE /villagers - 200 OK", function(done) { 
       
     request(app)
-      .delete("/villagers/9")
+      .delete("/villagers/19")
       .set({ access_token : access_token_admin })
       .end(function(err, res){
         if(err) done(err)
@@ -94,10 +95,35 @@ describe("ROLE ADMIN CAN FETCH, EDIT AND DELETE USER", function(){
       })
   })
 
+  it("GET/user - 200 OK", function(done) { 
+          
+    request(app)
+      .get("/user/11")
+      .set({ access_token: access_token_admin })
+      .end(function(err, res){
+        if(err) done(err)
+        else {
+          expect(res.statusCode).toEqual(200)   
+          expect(typeof res.body).toEqual('object')
+          expect(res.body).toHaveProperty("id")
+          expect(typeof res.body.id).toEqual("number")
+          expect(res.body).toHaveProperty("name")
+          expect(typeof res.body.name).toEqual("string")
+          expect(res.body).toHaveProperty("username")
+          expect(typeof res.body.username).toEqual("string")
+          expect(res.body).toHaveProperty("role")
+          expect(typeof res.body.role).toEqual("string")
+          expect(res.body).toHaveProperty("VillageId")
+          expect(typeof res.body.VillageId).toEqual("number")
+          done()
+        }
+      })
+  })
+
   it("PUT /user - 200 OK", function(done) { 
     
     request(app)
-      .put("/admin/change/24")
+      .put("/admin/change/25")
       .set({ access_token: access_token_admin })
       .end(function(err, res){
         if(err) done(err)
@@ -174,6 +200,22 @@ describe("ERROR UNAUTHORIZED", function(){
     
     request(app)
       .put("/admin/change/20")
+      .set({ access_token: access_token_member })
+      .end(function(err, res){
+        if(err) done(err)
+        else {
+          expect(res.statusCode).toEqual(401)
+          expect(typeof res.body).toEqual("object")
+          expect(res.body).toHaveProperty("message")
+          expect(res.body.message).toEqual("Unauthorized")
+          done()
+        }
+      })
+  })
+  it("GET/user - 200 OK", function(done) { 
+    
+    request(app)
+      .get("/user/11")
       .set({ access_token: access_token_member })
       .end(function(err, res){
         if(err) done(err)

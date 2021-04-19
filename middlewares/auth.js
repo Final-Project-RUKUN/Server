@@ -14,7 +14,7 @@ const authenticate = async (req, res, next) =>{
                 next()
             } else {
               next({ code : 401,
-                message : 'Unauthoraized'
+                message : 'Unauthorized'
               })
             }
         } else {
