@@ -40,7 +40,7 @@ class TransactionController {
     const { id, VillageId } = req.currentUser
     
     try {
-      if (type === 'expanse') {
+      if (type === 'expance') {
         const { balance } = await Village.findByPk(VillageId)
         const newBalance = balance - +amount
 
