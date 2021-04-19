@@ -17,11 +17,11 @@ class SuggestionConroller {
   }
 
   static async addSuggestion(req, res, next){
-    const { title, description } = req.body
+    const { title, description, type } = req.body
     const { id, VillageId } = req.currentUser
 
     try {
-      const suggestion = await Suggestion.create({title, description, UserId: id, VillageId})
+      const suggestion = await Suggestion.create({title, description, type, UserId: id, VillageId})
       
       res.status(201).json(suggestion)
     } catch (error) {
