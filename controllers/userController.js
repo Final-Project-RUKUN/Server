@@ -27,10 +27,9 @@ class UserController {
   }
 
   static async getUser(req, res, next) {
-    const { id } = req.params
+    const { id } = req.currentUser
     try {
       const user = await User.findByPk(id)
-
       res.status(200).json(user)
     } catch (error) {
       next(error)
@@ -39,7 +38,6 @@ class UserController {
 
   static async register(req, res, next) {
     const { name, username, password, invitation_code, push_token } = req.body
-    console.log('mausk');
     try {
       const role = 'member'
 
@@ -52,18 +50,6 @@ class UserController {
       } else {
         next({ code: 404, message: 'Cannot Found Village' })
       }
-    } catch (error) {
-      next(error)
-    }
-  }
-
-  static async updateUser(req, res, next) {
-    const { name, username, password, role } = req.body
-    const { id } = req.params
-    try {
-      const user = await User.udpate({ name, username, password, role }, { where: { id } })
-
-      res.status(200).json(user)
     } catch (error) {
       next(error)
     }

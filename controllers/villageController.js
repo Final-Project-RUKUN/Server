@@ -14,9 +14,9 @@ class VillageController {
   }
 
   static async deleteVillage(req, res, next) {
-    const { VillageId } = req.currentUser
+    const { id } = req.params
     try {
-      await Village.destroy({ where : { id: VillageId }})
+      await Village.destroy({ where : { id }})
 
       res.status(200).json({ message: "Success Delete Village" })
     } catch (error) {
