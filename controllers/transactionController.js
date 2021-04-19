@@ -23,8 +23,8 @@ class TransactionController {
     try {
       const { id } = req.currentUser
 
-      const transactions = await Transaction.findAll({ where: { id }})
-      
+      const transactions = await Transaction.findAll({ where: { UserId : id }})
+      console.log(transactions);
       res.status(200).json(transactions)
     } catch (error) {
       next(error)
