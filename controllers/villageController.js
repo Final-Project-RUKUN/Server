@@ -25,6 +25,17 @@ class VillageController {
     }
   }
 
+  static async deleteVillage(req, res, next) {
+    const { id } = req.params
+    try {
+      await Village.destroy({ where : { id }})
+
+      res.status(200).json({ message: "Success Delete Village" })
+    } catch (error) {
+      next(error)
+    }
+  }
+
 }
 
 module.exports = VillageController
