@@ -7,12 +7,12 @@ const createToken = require('../helpers/useToken')
 class AdminController {
 
   static async registerAdmin(req, res, next) {
-    const { name, username, password, nameVillage, location, balance, push_token } = req.body
+    const { name, username, password, nameVillage, location, balance } = req.body
     
     try {
         const role = 'admin'
         const invitation_code = createToken()
-        const user = await User.create({ name, username, password, role, push_token })
+        const user = await User.create({ name, username, password, role })
         
         const village = await Village.create({ name: nameVillage, location, invitation_code, balance, UserId: user.id})
 
@@ -39,7 +39,7 @@ class AdminController {
           if (isPassword && user.role === 'admin') {
             const access_token = generateToken({ id: user.id, username: user.username })
             
-            res.status(200).json({access_token})
+            res.status(200).json(access_token)
           } else {
             next({ code: 404, message: "Invalid Username/Password" })
           }

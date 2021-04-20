@@ -6,9 +6,11 @@ route.post('/login', UserController.login)
 
 route.post('/register', UserController.register)
 
-route.use( authenticate, authorizeAdmin )
+route.use( authenticate)
 
 route.get('/', UserController.getUser)
+
+route.use( authorizeAdmin )
 
 route.delete('/:id', UserController.deleteUser)
 

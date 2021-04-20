@@ -4,7 +4,7 @@ const { generateToken } = require('../helpers/useJwt')
 class UserController {
 
   static async login(req, res, next) {
-    const { username, password } = req.body
+    const { username, password, push_token } = req.body
     try {
       const user = await User.findOne({ where: { username } })
 
@@ -12,6 +12,8 @@ class UserController {
         const isPassword = comparePassword( password, user.password )
         
         if (isPassword) {
+          await User.update({ push_token }, { where: { username } })
+          
           const token = generateToken({ id: user.id, username: user.username })
 
           res.status(200).json(token)
@@ -37,14 +39,14 @@ class UserController {
   }
 
   static async register(req, res, next) {
-    const { name, username, password, invitation_code, push_token } = req.body
+    const { name, username, password, invitation_code } = req.body
     try {
       const role = 'member'
 
       const village = await Village.findOne({ where: { invitation_code }})
 
       if (village) {
-        const user = await User.create({ name, username, password, role, VillageId: village.id, push_token })
+        const user = await User.create({ name, username, password, role, VillageId: village.id })
 
         res.status(201).json(user)
       } else {
