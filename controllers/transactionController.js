@@ -6,13 +6,13 @@ class TransactionController {
     try {
       const { VillageId } = req.currentUser
 
-      const village = await Village.findAll({where : { id : VillageId }, include: {
+      const village = await Village.findOne({where : { id : VillageId }, include: {
         model: Transaction,
         separate: true,
         order: [['createdAt', 'DESC']],
         include: User
     }})
-      
+      console.log(village);
       res.status(200).json(village)
     } catch (error) {
       next(error)

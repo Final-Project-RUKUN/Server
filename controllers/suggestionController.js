@@ -3,12 +3,14 @@ class SuggestionConroller {
   static async fetchSuggestions(req, res, next){
     try {
       const { VillageId } = req.currentUser
-      const villageSuggestions = await Village.findAll({where : { id: VillageId }, include: {
+      const villageSuggestions = await Village.findOne({where : { id : VillageId}, 
+      include: {
         model: Suggestion,
         separate: true,
         order: [['createdAt', 'DESC']],
         include: User
-    }});
+    }
+  });
     
       res.status(200).json(villageSuggestions)
     } catch (error) {
