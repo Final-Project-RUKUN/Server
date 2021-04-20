@@ -1,6 +1,0 @@
-{
-    "collectCoverageFrom": [
-        "!**/routes/midtransRoute.js",
-        "!**/folder-with-untested-files/**"
-      ]
-}
