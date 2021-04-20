@@ -27,7 +27,7 @@ describe("SUCCESS /transactions", function(){
       amount: 10,
       category: "iuran",
       note: "iuran sampah bulanan",
-      type: "expanse",
+      type: "expance",
       status: 'panding'
     }
     request(app)

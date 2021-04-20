@@ -65,8 +65,8 @@ const authorizeAdmin = async (req, res, next) =>{
         })
       }
     } else  {
-      next({code : 401,
-        message : 'Unauthorized'
+      next({code : 404,
+        message : 'User Not Found'
       })    
     }
   } catch (error) {

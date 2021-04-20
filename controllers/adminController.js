@@ -20,11 +20,7 @@ class AdminController {
 
         res.status(201).json({ message: 'Success Crete User and Village', invitation_code})
     } catch (error) {
-      if (Array.isArray(error)) {
-        next({ name : 'SequelizeValidationError', errors: error })
-      } else {
-        next(error)
-      }
+      next(error)
     }
   }
 

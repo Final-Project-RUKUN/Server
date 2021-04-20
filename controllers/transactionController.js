@@ -12,7 +12,6 @@ class TransactionController {
         order: [['createdAt', 'DESC']],
         include: User
     }})
-      console.log(village);
       res.status(200).json(village)
     } catch (error) {
       next(error)
