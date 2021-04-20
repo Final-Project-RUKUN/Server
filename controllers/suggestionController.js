@@ -10,7 +10,7 @@ class SuggestionConroller {
         order: [['createdAt', 'DESC']],
         include: User
     }
-  });
+  })
     
       res.status(200).json(villageSuggestions)
     } catch (error) {
