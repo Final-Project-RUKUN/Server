@@ -6,13 +6,12 @@ class TransactionController {
     try {
       const { VillageId } = req.currentUser
 
-      const village = await Village.findByPk(VillageId, { 
-        include: [{
-          model:  Transaction,
-          include: User, 
-          order: [['User', 'createdAt', 'DESC']]
-        }]
-      })
+      const village = await Village.findAll({where : { id : VillageId }, include: {
+        model: Transaction,
+        separate: true,
+        order: [['createdAt', 'DESC']],
+        include: User
+    }})
       
       res.status(200).json(village)
     } catch (error) {
