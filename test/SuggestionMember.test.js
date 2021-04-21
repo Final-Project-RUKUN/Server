@@ -158,10 +158,10 @@ describe(`DELETE /suggestions`, function(){
       .end(function(err,res){
         if(err) done(err)
         else {
-          expect(res.statusCode).toEqual(401)
+          expect(res.statusCode).toEqual(404)
           expect(typeof res.body).toEqual("object")
           expect(res.body).toHaveProperty("message")
-          expect(res.body.message).toEqual("Unauthorized")
+          expect(res.body.message).toEqual("Suggestion Not Found")
 
           done()
         }

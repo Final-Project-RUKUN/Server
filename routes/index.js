@@ -1,3 +1,4 @@
+const midtransRoute = require('./midtransRoute')
 const route = require('express').Router()
 const userRoute = require('./userRoute')
 const adminRoute = require('./adminRoute')
@@ -12,6 +13,8 @@ route.use('/user', userRoute)
 route.use('/admin', adminRoute)
 
 route.use(authenticate)
+
+route.use('/midtrans', midtransRoute)
 
 route.use('/village', villageRoute)
 

@@ -2,6 +2,21 @@
 const route = require('express').Router()
 const axios = require('axios')
 
+route.get('/', async (req,res,next)=>{
+  const { title, amount, category, note, username } = req.query
+  const { id, VillageId } = req.currentUser
+
+  try {
+    const { balance } = await Village.findByPk(VillageId)
+    const newBalance = +balance + +amount
+    await Village.update({ balance: newBalance }, { where: { id: VillageId }})
+
+    const dataCreate = await Transaction.create({ title, amount, category, note, type: "income", VillageId, UserId: id, status:"paid" })
+    
+    console.log('hallo ini midtrans');
+
+    const snapToken = await axios({
+=======
 route.post('/', (req,res)=>{
     axios({
       // Below is the API URL endpoint
@@ -38,6 +53,13 @@ route.post('/', (req,res)=>{
       .catch(err=>{
         console.log(err.response.data);
       })
+
+      res.render('index.ejs',{snapToken : snapToken.data.token});
+
+    } catch (error) {
+      next(error)
+    }
+
     // res.sendFile(path.join(__dirname + '/midtrans/index.html'));
   })
 
