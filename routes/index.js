@@ -8,11 +8,6 @@ const transactionRoute = require('./transactionRoute')
 const suggestionRoute = require('./suggestioRoute')
 const { authenticate } = require('../middlewares/auth')
 
-
-route.get('/' ,(req, res)=>{
-  res.send('gooooo')
-})
-
 route.use('/user', userRoute)
 
 route.use('/admin', adminRoute)
