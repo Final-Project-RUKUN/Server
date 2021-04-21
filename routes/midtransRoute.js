@@ -14,7 +14,7 @@ route.get('/', async (req,res,next)=>{
 
     const dataCreate = await Transaction.create({ title, amount, category, note, type: "income", VillageId, UserId: id, status:"paid" })
     
-   
+    console.log('hallo ini midtrans');
 
     const snapToken = await axios({
       // Below is the API URL endpoint
@@ -43,9 +43,8 @@ route.get('/', async (req,res,next)=>{
           }
         }
       })
-      console.log("Retrieved snap token:", snapToken?.data.token);
 
-      res.render('index.ejs',{snapToken : snapToken?.data.token});
+      res.render('index.ejs',{snapToken : snapToken.data.token});
 
     } catch (error) {
       next(error)

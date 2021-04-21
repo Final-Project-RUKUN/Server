@@ -32,9 +32,10 @@ const authorize = async (req, res, next) =>{
   const { id: SuggestionId } = req.params
   try {
     const suggestion = await Suggestion.findByPk(SuggestionId)
+    const user = await User.findByPk(id)
 
     if (suggestion) {
-      if (suggestion.UserId === id) {
+      if (suggestion.UserId === id || user.role === 'admin') {
         next()
       } else {
         next({ code : 401,
@@ -42,8 +43,8 @@ const authorize = async (req, res, next) =>{
         })
       }
     } else  {
-      next({code : 401,
-        message : 'Unauthorized'
+      next({code : 404,
+        message : 'Suggestion Not Found'
       })    
     }
   } catch (error) {
@@ -58,15 +59,17 @@ const authorizeAdmin = async (req, res, next) =>{
     
     if (user) {
       if (user.role === 'admin') {
+        console.log('masuk');
         next()
       } else {
+        console.log('loooh');
         next({ code : 401,
           message : 'Unauthorized'
         })
       }
     } else  {
-      next({code : 401,
-        message : 'Unauthorized'
+      next({code : 404,
+        message : 'User Not Found'
       })    
     }
   } catch (error) {

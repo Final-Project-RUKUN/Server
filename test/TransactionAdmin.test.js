@@ -118,10 +118,9 @@ describe("ERROR POST /transactions", function(){
         if(err) done(err)
         else {
           expect(res.statusCode).toEqual(400)
-          console.log(res.body);
-          // expect(Array.isArray(res.body.message)).toEqual(true)
-          // expect(typeof res.body.message[0]).toEqual("string")
-          // expect(res.body.message[0]).toEqual("Title is required")
+          expect(Array.isArray(res.body.message)).toEqual(true)
+          expect(typeof res.body.message[0]).toEqual("string")
+          expect(res.body.message[0]).toEqual("Title is required")
 
           done()
         }
