@@ -1,6 +1,5 @@
 
 const route = require('express').Router()
-const { Transaction, Village, User } = require('../models')
 const axios = require('axios')
 
 route.get('/', async (req,res,next)=>{
@@ -17,6 +16,9 @@ route.get('/', async (req,res,next)=>{
     console.log('hallo ini midtrans');
 
     const snapToken = await axios({
+=======
+route.post('/', (req,res)=>{
+    axios({
       // Below is the API URL endpoint
       url: "https://app.sandbox.midtrans.com/snap/v1/transactions",
       method: "post",
@@ -32,16 +34,24 @@ route.get('/', async (req,res,next)=>{
         // Below is the HTTP request body in JSON
         {
           transaction_details: {
-            order_id: "order-csb-"+dataCreate.id,
-            gross_amount: amount
+            order_id: "order-csb-111",
+            gross_amount: req.body.amount
           },
           credit_card: {
             secure: true
           },
           customer_details: {
-            first_name: username
+            first_name: req.body.username
           }
         }
+      }).then( snapResponse => { 
+        let snapToken = snapResponse.data.token;
+        console.log("Retrieved snap token:", snapToken);
+        // Pass the Snap Token to frontend, render the HTML page
+        res.render('index.ejs',{snapToken});
+      })
+      .catch(err=>{
+        console.log(err.response.data);
       })
 
       res.render('index.ejs',{snapToken : snapToken.data.token});
@@ -49,6 +59,7 @@ route.get('/', async (req,res,next)=>{
     } catch (error) {
       next(error)
     }
+
     // res.sendFile(path.join(__dirname + '/midtrans/index.html'));
   })
 
