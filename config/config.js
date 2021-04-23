@@ -10,7 +10,8 @@ let capsEnv = env.toUpperCase()
       password : process.env["DB_PASSWORD_" + capsEnv],
       database : process.env["DB_NAME_" + capsEnv],
       host : process.env["DB_HOST_" + capsEnv],
-      dialect : process.env["DB_DIALECT_" + capsEnv] 
+      dialect : process.env["DB_DIALECT_" + capsEnv],
+      logging: true
   }
 
 module.exports = {

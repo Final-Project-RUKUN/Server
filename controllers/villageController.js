@@ -17,7 +17,6 @@ class VillageController {
     const { VillageId } = req.currentUser
     const { location, name } = req.body
     try {
-      console.log({ location, name });
       await Village.update( { location, name } ,{ where : { id: VillageId }})
 
       res.status(200).json({ message: "Success Update Village" })
