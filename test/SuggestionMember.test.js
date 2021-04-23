@@ -132,7 +132,6 @@ describe(`DELETE /suggestions`, function(){
   //DELETE suggestions
   it(`DELETE /suggestions/${id} - 200 OK`, function(done) {
 
-    console.log(id);
     request(app)
       .delete(`/suggestions/${id}`)
       .set({ access_token })

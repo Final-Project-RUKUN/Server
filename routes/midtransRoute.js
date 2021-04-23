@@ -10,11 +10,8 @@ route.get('/', async (req,res,next)=>{
     const { balance } = await Village.findByPk(VillageId)
     const newBalance = +balance + +amount
     await Village.update({ balance: newBalance }, { where: { id: VillageId }})
-
     const dataCreate = await Transaction.create({ title, amount, category, note, type: "income", VillageId, UserId: id, status:"paid" })
     
-    console.log('hallo ini midtrans');
-
     const snapToken = await axios({
 =======
 route.post('/', (req,res)=>{
@@ -53,8 +50,9 @@ route.post('/', (req,res)=>{
       .catch(err=>{
         console.log(err.response.data);
       })
-
-      res.render('index.ejs',{snapToken : snapToken.data.token});
+      res.status(201).json({snapToken : snapToken.data.token})
+      return snapToken
+      // res.render('index.ejs',{snapToken : snapToken.data.token});
 
     } catch (error) {
       next(error)

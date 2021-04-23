@@ -38,6 +38,12 @@ class TransactionController {
     const { id, VillageId } = req.currentUser
     
     try {
+      if(+amount === 0){
+        next({
+          code: 400,
+          message: 'Invalid Input Payment'
+        })
+      }
       if (type === 'expanse') {
         const { balance } = await Village.findByPk(VillageId)
         const newBalance = balance - +amount

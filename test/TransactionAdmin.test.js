@@ -11,7 +11,6 @@ beforeAll(async function(done){
     
     access_token = jwt.sign({ id: user.id, username: user.username }, process.env.KEY)
     
-    console.log(access_token);
     done()
      
   } catch (error) {

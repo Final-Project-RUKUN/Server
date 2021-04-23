@@ -59,10 +59,8 @@ const authorizeAdmin = async (req, res, next) =>{
     
     if (user) {
       if (user.role === 'admin') {
-        console.log('masuk');
         next()
       } else {
-        console.log('loooh');
         next({ code : 401,
           message : 'Unauthorized'
         })
